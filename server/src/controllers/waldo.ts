@@ -14,11 +14,13 @@ async function handleWaldoCheck(req: Request, res: Response): Promise<void> {
     const { postX, postY } = req.body;
     for (const waldo of Object.values(waldoTargets)) {
       if (waldo.isWaldoFound(postX, postY)) {
-        res.status(200).json({ found: true, character: waldo.character });
+        res.status(200).json({
+          message: `${waldo.character} found! at coordinates (${postX}, ${postY})`, 
+        });
         return;
       }
     }
-    res.status(404).json({ found: false, message: "Waldo not found" });
+    res.status(404).json({message: "Character not found at the given coordinates."});
     return;
   } catch (error) {
     console.error("Error in waldo controller:", error);
