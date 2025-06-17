@@ -16,6 +16,7 @@ async function handleWaldoCheck(req: Request, res: Response): Promise<void> {
       if (waldo.isWaldoFound(postX, postY)) {
         res.status(200).json({
           message: `${waldo.character} found! at coordinates (${postX}, ${postY})`, 
+          character: waldo.character, 
         });
         return;
       }
