@@ -1,6 +1,5 @@
 "use client";
-import { useRef } from "react";
-import { useState } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import useApi from "./hooks/useApi";
 
 export default function Home() {
@@ -8,6 +7,15 @@ export default function Home() {
   const siegeImage = useRef<HTMLImageElement>(null);
   const { fetchData, error} = useApi("POST", false);
   const [message, setMessage] = useState<string | null>(null);
+  const charactersToFind = useMemo(() => [
+    "White Turban Guy",
+    "Orange Shirt Guy",
+    "Orange Flag",
+    "White Horse",
+    "Red Dress Woman"
+  ], []);
+  const [gameOver, setGameOver] = useState(false);
+  const [foundCharacters, setFoundCharacters] = useState<string[]>([]);
   
   const handleClick = (event: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
     if (!siegeImage.current) return;
@@ -25,8 +33,24 @@ export default function Home() {
     checkWaldo(newCoords);
   }
 
+  useEffect(() => {
+  const allFound = charactersToFind.every(char => foundCharacters.includes(char));
+  if (allFound && !gameOver) {
+    setGameOver(true);
+    setMessage("Congratulations! You found all characters!");
+  }
+}, [foundCharacters, charactersToFind, gameOver]);
+
 async function checkWaldo(cords: { x: number, y: number }) {
     if (!cords) return;
+
+    if(foundCharacters == charactersToFind) {
+      setGameOver(true);
+      setCoords(null);
+      setFoundCharacters([]);
+      setMessage("Game Over You have already found all characters! Please refresh the page to play again.");
+      return;
+    }
 
     try {
       setMessage("");
@@ -35,6 +59,9 @@ async function checkWaldo(cords: { x: number, y: number }) {
         postY: cords.y,
       });
       if (res) {
+        if (res.character && !foundCharacters.includes(res.character)) {
+          setFoundCharacters(prev => [...prev, res.character]);
+        } 
         setMessage(res.message);
       }
     } catch (err) {
@@ -54,6 +81,10 @@ async function checkWaldo(cords: { x: number, y: number }) {
         </div>
       )}
 
+
+          <p>Characters to find: {charactersToFind.join(", ")}</p>
+          <p>Characters found: {foundCharacters.join(", ")}</p>
+
       {
         message && (
           <div className="text-green-500 mt-4">
@@ -66,6 +97,16 @@ async function checkWaldo(cords: { x: number, y: number }) {
         error && (
           <div className="text-red-500 mt-4">
             <p>Error: {error}</p>
+          </div>
+        )
+      }
+
+      {
+        gameOver && (
+          <div className="text-blue-500 mt-4">
+            <p>
+              Congratulations! You have found all characters!
+            </p>
           </div>
         )
       }
