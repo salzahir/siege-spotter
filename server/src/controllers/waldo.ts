@@ -12,16 +12,18 @@ function handlePosts(req: Request, res: Response): void {
 async function handleWaldoCheck(req: Request, res: Response): Promise<void> {
   try {
     const { postX, postY } = req.body;
-    for (const waldo of Object.values(waldoTargets)) {
-      if (waldo.isWaldoFound(postX, postY)) {
-        res.status(200).json({
-          message: `${waldo.character} found! at coordinates (${postX}, ${postY})`, 
-          character: waldo.character, 
-        });
-        return;
-      }
+    
+    const found = waldoTargets.find(waldo => waldo.isWaldoFound(postX, postY));
+
+    if (!found) {
+      res.status(404).json({ message: "Waldo not found at the given coordinates." });
+      return;
     }
-    res.status(404).json({message: "Character not found at the given coordinates."});
+
+    res.status(200).json({
+      message: `${found.character} found! at coordinates (${postX}, ${postY})`,
+      character: found.character,
+    });
     return;
   } catch (error) {
     console.error("Error in waldo controller:", error);
