@@ -26,4 +26,5 @@ model Waldo {
   name String
   xPos Double
   yPos Double
+  marginError: number
 }
