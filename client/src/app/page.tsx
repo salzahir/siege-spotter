@@ -80,10 +80,21 @@ async function checkWaldo(cords: { x: number, y: number }) {
           <p>Normalized Coordinates: {cords.x.toFixed(4)}, {cords.y.toFixed(4)}</p>
         </div>
       )}
-
-
-          <p>Characters to find: {charactersToFind.join(", ")}</p>
-          <p>Characters found: {foundCharacters.join(", ")}</p>
+      
+      <div className="flex flex-wrap gap-2 mt-4">
+        {charactersToFind.map((char) => (
+          <span
+            key={char}
+            className={`inline-block px-2 py-1 rounded ${
+              foundCharacters.includes(char)
+                ? 'bg-green-500 text-white'
+                : 'bg-gray-300 text-black'
+            }`}
+          >
+            {char}
+          </span>
+        ))}
+      </div>
 
       {
         message && (
