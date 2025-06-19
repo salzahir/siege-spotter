@@ -16,8 +16,38 @@ export default function Home() {
   ], []);
   const [gameOver, setGameOver] = useState(false);
   const [foundCharacters, setFoundCharacters] = useState<string[]>([]);
+
+const [startTime, setStartTime] = useState<number | null>(null);
+const [now, setNow] = useState<number | null>(null);
+const intervalRef = useRef<NodeJS.Timeout | null>(null);
   
+  function handleStart() {
+    setStartTime(Date.now());
+    setNow(Date.now());
+
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+    intervalRef.current = setInterval(() => {
+      setNow(Date.now());
+    }
+    , 1000);
+  }
+
+  function handleStop() {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+    intervalRef.current = null;
+
+  }
+
   const handleClick = (event: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
+    if(!startTime && !gameOver) {
+      handleStart();
+      setMessage("Game Started! Click on the image to find Waldo.");
+    }
+
     if (!siegeImage.current) return;
     const rect = siegeImage.current.getBoundingClientRect();
     const x = event.clientX - rect.left;
@@ -31,13 +61,15 @@ export default function Home() {
     const newCoords = { x: parseFloat(normalizedX), y: parseFloat(normalizedY) };
     setCoords(newCoords);
     checkWaldo(newCoords);
+
   }
 
   useEffect(() => {
   const allFound = charactersToFind.every(char => foundCharacters.includes(char));
   if (allFound && !gameOver) {
     setGameOver(true);
-    setMessage("Congratulations! You found all characters!");
+    setMessage("Game Over You have already found all characters! Please refresh the page to play again.");
+    handleStop();
   }
 }, [foundCharacters, charactersToFind, gameOver]);
 
@@ -70,6 +102,11 @@ async function checkWaldo(cords: { x: number, y: number }) {
     }
   }
 
+  let timer = 0;
+  if (startTime && now) {
+    timer = ((now - startTime) / 1000);
+  }
+
   return (
     <>
       <div className="min-h-screen flex flex-col items-center justify-center font-[family-name:var(--font-geist-sans)]">
@@ -80,7 +117,7 @@ async function checkWaldo(cords: { x: number, y: number }) {
           <p>Normalized Coordinates: {cords.x.toFixed(4)}, {cords.y.toFixed(4)}</p>
         </div>
       )}
-      
+
       <div className="flex flex-wrap gap-2 mt-4">
         {charactersToFind.map((char) => (
           <span
@@ -94,6 +131,10 @@ async function checkWaldo(cords: { x: number, y: number }) {
             {char}
           </span>
         ))}
+      </div>
+
+        <div className="text-lg font-semibold mt-4">
+            Time: {timer} seconds
       </div>
 
       {
