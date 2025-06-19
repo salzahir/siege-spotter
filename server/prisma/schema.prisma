@@ -19,12 +19,15 @@ model User {
   name      String
   email     String   @unique
   createdAt DateTime @default(now())
+  bestTime Float
+  currentTime Float
+  lastPlayed DateTime?
 }
 
 model Waldo {
   id    Int     @id @default(autoincrement())
   name String
-  xPos Double
-  yPos Double
-  marginError: number
+  xPos Float
+  yPos Float
+  marginError Float
 }
