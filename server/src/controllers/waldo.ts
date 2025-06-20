@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import waldoTargets from "../models/waldo";
+import { getWaldos } from "../db/waldos";
+import Waldo from "../models/waldo";
 
 function handleHome(req: Request, res: Response): void {
   res.status(200).json({ message: "Welcome to the Waldo API!" });
@@ -12,7 +13,7 @@ function handlePosts(req: Request, res: Response): void {
 async function handleWaldoCheck(req: Request, res: Response): Promise<void> {
   try {
     const { postX, postY } = req.body;
-    
+    const waldoTargets: Waldo[] = await getWaldos();
     const found = waldoTargets.find(waldo => waldo.isWaldoFound(postX, postY));
 
     if (!found) {
