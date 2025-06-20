@@ -30,8 +30,7 @@ const intervalRef = useRef<NodeJS.Timeout | null>(null);
     }
     intervalRef.current = setInterval(() => {
       setNow(Date.now());
-    }
-    , 1000);
+    }, 45);
   }
 
   function handleStop() {
@@ -76,14 +75,6 @@ const intervalRef = useRef<NodeJS.Timeout | null>(null);
 async function checkWaldo(cords: { x: number, y: number }) {
     if (!cords) return;
 
-    if(foundCharacters == charactersToFind) {
-      setGameOver(true);
-      setCoords(null);
-      setFoundCharacters([]);
-      setMessage("Game Over You have already found all characters! Please refresh the page to play again.");
-      return;
-    }
-
     try {
       setMessage("");
       const res = await fetchData("/check", {
@@ -104,7 +95,7 @@ async function checkWaldo(cords: { x: number, y: number }) {
 
   let timer = 0;
   if (startTime && now) {
-    timer = ((now - startTime) / 1000);
+    timer = (now - startTime);
   }
 
   return (
@@ -134,7 +125,7 @@ async function checkWaldo(cords: { x: number, y: number }) {
       </div>
 
         <div className="text-lg font-semibold mt-4">
-            Time: {timer} seconds
+            Time: {(timer / 1000).toFixed(3)} seconds
       </div>
 
       {
