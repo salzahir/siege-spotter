@@ -6,6 +6,7 @@ export default function Home() {
   const [cords, setCoords] = useState<{ x: number; y: number } | null>(null);
   const siegeImage = useRef<HTMLImageElement>(null);
   const { fetchData, error} = useApi("POST", false);
+  const {fetchData: postUser} = useApi("POST", true);
   const [message, setMessage] = useState<string | null>(null);
   const charactersToFind = useMemo(() => [
     "White Turban Guy",
@@ -20,6 +21,10 @@ export default function Home() {
 const [startTime, setStartTime] = useState<number | null>(null);
 const [now, setNow] = useState<number | null>(null);
 const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+const [name, setName] = useState("");
+const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
   
   function handleStart() {
     setStartTime(Date.now());
@@ -98,6 +103,22 @@ async function checkWaldo(cords: { x: number, y: number }) {
     timer = (now - startTime);
   }
 
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const json = { name, email, password, timer};
+    try {
+      const response = await postUser("/users", json);
+      if (response) {
+        console.log("User data submitted successfully:", response);
+        setMessage("User data submitted successfully!");
+      }
+    } catch (err) {
+      console.error("Error submitting user data:", err);
+      setMessage("An error occurred while submitting user data.");
+    }
+  }
+
   return (
     <>
       <div className="min-h-screen flex flex-col items-center justify-center font-[family-name:var(--font-geist-sans)]">
@@ -146,10 +167,22 @@ async function checkWaldo(cords: { x: number, y: number }) {
 
       {
         gameOver && (
-          <div className="text-blue-500 mt-4">
-            <p>
-              Congratulations! You have found all characters!
-            </p>
+          <div className="text-blue-500 mt-4 flex flex-col gap-4">
+            <p>Congratulations! You have found all characters!</p>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-2 mt-4">
+              <label htmlFor="name">Name:</label>
+              <input id="name" type="text" value={name} onChange={e => setName(e.target.value)} />
+
+              <label htmlFor="email">Email:</label>
+              <input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} />
+
+              <label htmlFor="password">Password (Optional):</label>
+              <input id="password" type="text" value={password} onChange={e => setPassword(e.target.value)} />
+
+              <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded mt-2">
+                Submit
+              </button>
+            </form>
           </div>
         )
       }
