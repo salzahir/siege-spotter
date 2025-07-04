@@ -9,6 +9,7 @@ async function getUsers() {
 
       },
         select: {
+          id: true,
           name: true,
           bestTime: true,
           currentTime: true,

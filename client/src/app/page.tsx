@@ -28,6 +28,13 @@ function Home() {
                 >
                     Start Game
                 </Link>
+
+                <Link
+                    href="/leaderboard"
+                    className="inline-block px-6 py-3 rounded-lg font-semibold transition-colors bg-[#1F4D7A] text-[#F5F5F5] border-2 border-[#C89F45] hover:bg-[#C89F45]"
+                >
+                    View Leaderboard
+                </Link>
             </div>
         </div>
     );
