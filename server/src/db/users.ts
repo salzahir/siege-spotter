@@ -1,5 +1,5 @@
 import prisma from "./prisma";
-
+import {hashPassword, comparePassword} from "../utils/hash";
 
 async function getUsers() {
   try {
@@ -25,11 +25,12 @@ async function getUsers() {
 
 async function postUser(name: string, email: string, password: string, time: number) {
   try {
+    const hashedPassword = await hashPassword(password);
     const user = await prisma.user.create({
       data: {
         name,
         email,
-        password,
+        password: hashedPassword,
         currentTime: time,
         bestTime: time, 
       },
@@ -41,7 +42,35 @@ async function postUser(name: string, email: string, password: string, time: num
   }
 }
 
+async function loginUser(email: string, password: string) {
+  try {
+
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    if (!user.password) {
+      throw new Error("User has no password set");
+    }
+
+    const isValidPassword = await comparePassword(password, user.password);
+
+    if (!isValidPassword) {
+      throw new Error("Invalid email or password");
+    } 
+
+    return user;
+  } catch (error) {
+    console.error("Error logging in user:", error);
+    throw error;
+  }
+}
+
 export {
   postUser
-  , getUsers
+  , getUsers, 
+  loginUser
 }
