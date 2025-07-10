@@ -35,6 +35,12 @@ function Home() {
                 >
                     View Leaderboard
                 </Link>
+                <Link
+                    href="/context"
+                    className="inline-block px-6 py-3 rounded-lg font-semibold transition-colors bg-[#1F4D7A] text-[#F5F5F5] border-2 border-[#B44A2F] hover:bg-[#B44A2F]"
+                >
+                    View Context
+                </Link>
             </div>
         </div>
     );

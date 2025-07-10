@@ -29,7 +29,6 @@ function Leaderboard() {
 
 
     return (
-
         <div>
             <h1>Leaderboard</h1>
             {error && <p>Error fetching leaderboard data</p>}
