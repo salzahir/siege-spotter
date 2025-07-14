@@ -1,6 +1,7 @@
 "use client";
 import { useRef, useState, useEffect, useMemo } from "react";
 import useApi from "../hooks/useApi";
+import useTimer from "../hooks/useTimer";
 
 export default function Game() {
   const [cords, setCoords] = useState<{ x: number; y: number } | null>(null);
@@ -17,56 +18,10 @@ export default function Game() {
   ], []);
   const [gameOver, setGameOver] = useState(false);
   const [foundCharacters, setFoundCharacters] = useState<string[]>([]);
-
-  const [startTime, setStartTime] = useState<number | null>(null);
-  const [now, setNow] = useState<number | null>(null);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  function handleStart() {
-    setStartTime(Date.now());
-    setNow(Date.now());
-
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-    intervalRef.current = setInterval(() => {
-      setNow(Date.now());
-    }, 45);
-  }
-
-  function handleStop() {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-    intervalRef.current = null;
-
-  }
-
-  const handleClick = (event: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
-    if (!startTime && !gameOver) {
-      handleStart();
-      setMessage("Game Started! Click on the image to find Waldo.");
-    }
-
-    if (!siegeImage.current) return;
-    const rect = siegeImage.current.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-
-    const normalizedX = (x / rect.width).toFixed(4);
-    const normalizedY = (y / rect.height).toFixed(4);
-
-    console.log('Pixel Coordinates:', x, y);
-    console.log('Normalized (0–1) Coordinates:', normalizedX, normalizedY);
-    const newCoords = { x: parseFloat(normalizedX), y: parseFloat(normalizedY) };
-    setCoords(newCoords);
-    checkWaldo(newCoords);
-
-  }
+  const { timer, handleStart, handleStop, startTime } = useTimer();
 
   useEffect(() => {
     const allFound = charactersToFind.every(char => foundCharacters.includes(char));
@@ -75,7 +30,7 @@ export default function Game() {
       setMessage("Game Over You have already found all characters! Please refresh the page to play again.");
       handleStop();
     }
-  }, [foundCharacters, charactersToFind, gameOver]);
+  }, [foundCharacters, charactersToFind, gameOver, handleStop]);
 
   async function checkWaldo(cords: { x: number, y: number }) {
     if (!cords) return;
@@ -98,10 +53,27 @@ export default function Game() {
     }
   }
 
-  let timer = 0;
-  if (startTime && now) {
-    timer = (now - startTime);
-  }
+
+  async function handleClick(event: React.MouseEvent<HTMLImageElement, MouseEvent>) {
+    if (!startTime && !gameOver) {
+      handleStart();
+      setMessage("Game Started! Click on the image to find Waldo.");
+    }
+
+    if (!siegeImage.current) return;
+    const rect = siegeImage.current.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    const normalizedX = (x / rect.width).toFixed(4);
+    const normalizedY = (y / rect.height).toFixed(4);
+
+    console.log('Pixel Coordinates:', x, y);
+    console.log('Normalized (0–1) Coordinates:', normalizedX, normalizedY);
+    const newCoords = { x: parseFloat(normalizedX), y: parseFloat(normalizedY) };
+    setCoords(newCoords);
+    checkWaldo(newCoords);
+  };
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
