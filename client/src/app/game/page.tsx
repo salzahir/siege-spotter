@@ -1,5 +1,6 @@
 "use client";
 import { useRef, useState, useEffect, useMemo } from "react";
+import Link from "next/link";
 import useApi from "../hooks/useApi";
 import useTimer from "../hooks/useTimer";
 import useForm from "../hooks/useForm";
@@ -207,6 +208,28 @@ export default function Game() {
           </div>
         </div>
       )}
+
+      {/* Navigation */}
+      <div className="max-w-4xl mx-auto flex flex-wrap justify-center gap-4 pt-8">
+        <Link 
+          href="/" 
+          className="px-6 py-3 rounded-lg font-semibold transition-colors bg-amber-800 hover:bg-amber-900 text-white shadow-sm"
+        >
+          🏠 Home
+        </Link>
+        <Link 
+          href="/context" 
+          className="px-6 py-3 rounded-lg font-semibold transition-colors bg-orange-600 hover:bg-orange-700 text-white shadow-sm"
+        >
+          🏰 Historical Context
+        </Link>
+        <Link 
+          href="/leaderboard" 
+          className="px-6 py-3 rounded-lg font-semibold transition-colors bg-amber-600 hover:bg-amber-700 text-white shadow-sm"
+        >
+          🏆 Leaderboard
+        </Link>
+      </div>
     </div>
   );
 }
