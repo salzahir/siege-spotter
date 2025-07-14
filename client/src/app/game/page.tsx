@@ -73,91 +73,140 @@ export default function Game() {
   };
 
   return (
-    <>
-      <div className="min-h-screen flex flex-col items-center justify-center font-[family-name:var(--font-geist-sans)]">
-        <h1 className="text-2xl font-bold">Welcome to Next.js</h1>
-        {cords && (
-          <div className="flex items-center justify-center p-4 bg-gray-800 text-white gap-2">
-            <p>Pixel Coordinates: {cords.x}, {cords.y}</p>
-            <p>Normalized Coordinates: {cords.x.toFixed(4)}, {cords.y.toFixed(4)}</p>
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 p-4">
+      {/* Header */}
+      <div className="text-center mb-6">
+        <h1 className="text-3xl font-bold text-amber-900 mb-2">🎯 Siege Spotter</h1>
+        <p className="text-amber-700 text-sm">Find all characters in the medieval siege scene</p>
+      </div>
+
+      {/* Game Status Bar */}
+      <div className="max-w-6xl mx-auto mb-6">
+        <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 shadow-sm">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            {/* Timer */}
+            <div className="text-lg font-semibold text-amber-900">
+              ⏱️ {(timer / 1000).toFixed(1)}s
+            </div>
+            
+            {/* Characters Progress */}
+            <div className="flex flex-wrap gap-2">
+              {charactersToFind.map((char) => (
+                <span
+                  key={char}
+                  className={`text-xs px-3 py-1 rounded-full font-medium ${
+                    foundCharacters.includes(char)
+                      ? 'bg-green-100 text-green-800 border border-green-200'
+                      : 'bg-gray-100 text-gray-600 border border-gray-200'
+                  }`}
+                >
+                  {foundCharacters.includes(char) ? '✓' : '•'} {char}
+                </span>
+              ))}
+            </div>
+
+            {/* Progress Counter */}
+            <div className="text-sm font-medium text-amber-800">
+              {foundCharacters.length}/{charactersToFind.length} found
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Messages */}
+      <div className="max-w-6xl mx-auto mb-4">
+        {gameMessage && (
+          <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-2 rounded-lg text-center mb-2">
+            {gameMessage}
           </div>
         )}
-
-        <div className="flex flex-wrap gap-2 mt-4">
-          {charactersToFind.map((char) => (
-            <span
-              key={char}
-              className={`inline-block px-2 py-1 rounded ${foundCharacters.includes(char)
-                  ? 'bg-green-500 text-white'
-                  : 'bg-gray-300 text-black'
-                }`}
-            >
-              {char}
-            </span>
-          ))}
-        </div>
-
-        <div className="text-lg font-semibold mt-4">
-          Time: {(timer / 1000).toFixed(3)} seconds
-        </div>
-
-        {
-          gameMessage && (
-            <div className="text-green-500 mt-4">
-              <p>{gameMessage}</p>
-            </div>
-          )
-        }
-
-        {
-          formMessage && (
-            <div className="text-blue-500 mt-4">
-              <p>{formMessage}</p>
-            </div>
-          )
-        }
-
-        {
-          error && (
-            <div className="text-red-500 mt-4">
-              <p>Error: {error}</p>
-            </div>
-          )
-        }
-
-        {
-          gameOver && (
-            <div className="text-blue-500 mt-4 flex flex-col gap-4">
-              <p>Congratulations! You have found all characters!</p>
-              <form onSubmit={handleSubmit} className="flex flex-col gap-2 mt-4">
-                <label htmlFor="name">Name:</label>
-                <input id="name" type="text" value={name} onChange={e => setName(e.target.value)} />
-
-                <label htmlFor="email">Email:</label>
-                <input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} />
-
-                <label htmlFor="password">Password (Optional):</label>
-                <input id="password" type="text" value={password} onChange={e => setPassword(e.target.value)} />
-
-                <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded mt-2">
-                  Submit
-                </button>
-              </form>
-            </div>
-          )
-        }
-
+        {formMessage && (
+          <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-2 rounded-lg text-center mb-2">
+            {formMessage}
+          </div>
+        )}
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-2 rounded-lg text-center mb-2">
+            Error: {error}
+          </div>
+        )}
       </div>
-      <div className="flex items-center justify-center mb-8 w-full">
-        {/* eslint-disable @next/next/no-img-element */}
-        <img
-          ref={siegeImage}
-          src="/siege.png"
-          alt="Siege Image"
-          className="cursor-crosshair max-w-[90%] max-h-[80vh] object-contain border border-gray-300 rounded"
-          onClick={handleClick}
-        />
+
+      {/* Game Image */}
+      <div className="flex justify-center mb-6">
+        <div className="relative">
+          {/* eslint-disable @next/next/no-img-element */}
+          <img
+            ref={siegeImage}
+            src="/siege.png"
+            alt="Medieval Siege Scene - Find the hidden characters"
+            className="cursor-crosshair max-w-full max-h-[70vh] object-contain rounded-lg shadow-lg border-2 border-amber-200"
+            onClick={handleClick}
+          />
+          {cords && (
+            <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+              {cords.x.toFixed(3)}, {cords.y.toFixed(3)}
+            </div>
+          )}
+        </div>
       </div>
-    </>
+
+      {/* Game Complete Modal */}
+      {gameOver && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-2xl">
+            <div className="text-center mb-6">
+              <div className="text-4xl mb-2">🎉</div>
+              <h2 className="text-2xl font-bold text-amber-900 mb-2">Congratulations!</h2>
+              <p className="text-amber-700">You found all characters in {(timer / 1000).toFixed(1)} seconds!</p>
+            </div>
+            
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                <input 
+                  id="name" 
+                  type="text" 
+                  value={name} 
+                  onChange={e => setName(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input 
+                  id="email" 
+                  type="email" 
+                  value={email} 
+                  onChange={e => setEmail(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password (Optional)</label>
+                <input 
+                  id="password" 
+                  type="password" 
+                  value={password} 
+                  onChange={e => setPassword(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                />
+              </div>
+              
+              <button 
+                type="submit" 
+                className="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+              >
+                Save to Leaderboard
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
