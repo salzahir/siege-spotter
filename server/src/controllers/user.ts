@@ -23,4 +23,19 @@ async function handlePostUser(req: Request, res: Response) {
     }
 }
 
-export { handleGetUsers, handlePostUser };
+async function handleLoginUser(req: Request, res: Response) {
+    const { email, password } = req.body;
+    try {
+        const user = await userDb.loginUser(email, password);
+        res.status(200).json(
+            {
+                message: "Login successful",
+                user
+        });
+    } catch (error) {
+        console.error("Error logging in user:", error);
+        res.status(401).json({ error: "Invalid email or password" });
+    }
+}
+
+export { handleGetUsers, handlePostUser, handleLoginUser };

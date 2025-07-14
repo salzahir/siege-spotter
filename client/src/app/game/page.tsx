@@ -103,7 +103,6 @@ export default function Game() {
     timer = (now - startTime);
   }
 
-
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const json = { name, email, password, timer };
