@@ -2,13 +2,12 @@
 import { useRef, useState, useEffect, useMemo } from "react";
 import useApi from "../hooks/useApi";
 import useTimer from "../hooks/useTimer";
+import useForm from "../hooks/useForm";
 
 export default function Game() {
   const [cords, setCoords] = useState<{ x: number; y: number } | null>(null);
   const siegeImage = useRef<HTMLImageElement>(null);
   const { fetchData, error } = useApi("POST", false);
-  const { fetchData: postUser } = useApi("POST", true);
-  const [message, setMessage] = useState<string | null>(null);
   const charactersToFind = useMemo(() => [
     "White Turban Guy",
     "Orange Shirt Guy",
@@ -18,16 +17,15 @@ export default function Game() {
   ], []);
   const [gameOver, setGameOver] = useState(false);
   const [foundCharacters, setFoundCharacters] = useState<string[]>([]);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [gameMessage, setGameMessage] = useState<string | null>(null);
   const { timer, handleStart, handleStop, startTime } = useTimer();
+  const { name, email, password, setName, setEmail, setPassword, handleSubmit, formMessage } = useForm(timer);
 
   useEffect(() => {
     const allFound = charactersToFind.every(char => foundCharacters.includes(char));
     if (allFound && !gameOver) {
       setGameOver(true);
-      setMessage("Game Over You have already found all characters! Please refresh the page to play again.");
+      setGameMessage("Game Over You have already found all characters! Please refresh the page to play again.");
       handleStop();
     }
   }, [foundCharacters, charactersToFind, gameOver, handleStop]);
@@ -36,7 +34,7 @@ export default function Game() {
     if (!cords) return;
 
     try {
-      setMessage("");
+      setGameMessage("");
       const res = await fetchData("/check", {
         postX: cords.x,
         postY: cords.y,
@@ -45,7 +43,7 @@ export default function Game() {
         if (res.character && !foundCharacters.includes(res.character)) {
           setFoundCharacters(prev => [...prev, res.character]);
         }
-        setMessage(res.message);
+        setGameMessage(res.message);
       }
     } catch (err) {
       console.error("Error checking Waldo:", err);
@@ -53,11 +51,10 @@ export default function Game() {
     }
   }
 
-
   async function handleClick(event: React.MouseEvent<HTMLImageElement, MouseEvent>) {
     if (!startTime && !gameOver) {
       handleStart();
-      setMessage("Game Started! Click on the image to find Waldo.");
+      setGameMessage("Game Started! Click on the image to find Waldo.");
     }
 
     if (!siegeImage.current) return;
@@ -74,21 +71,6 @@ export default function Game() {
     setCoords(newCoords);
     checkWaldo(newCoords);
   };
-
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const json = { name, email, password, timer };
-    try {
-      const response = await postUser("/users", json);
-      if (response) {
-        console.log("User data submitted successfully:", response);
-        setMessage("User data submitted successfully!");
-      }
-    } catch (err) {
-      console.error("Error submitting user data:", err);
-      setMessage("An error occurred while submitting user data.");
-    }
-  }
 
   return (
     <>
@@ -120,9 +102,17 @@ export default function Game() {
         </div>
 
         {
-          message && (
+          gameMessage && (
             <div className="text-green-500 mt-4">
-              <p>{message}</p>
+              <p>{gameMessage}</p>
+            </div>
+          )
+        }
+
+        {
+          formMessage && (
+            <div className="text-blue-500 mt-4">
+              <p>{formMessage}</p>
             </div>
           )
         }
