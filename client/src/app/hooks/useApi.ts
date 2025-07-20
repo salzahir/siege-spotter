@@ -12,19 +12,15 @@ function useApi(method: string, requiresAuth: boolean) {
         setLoading(true);
         setError(null);
         try {
-            const token = localStorage.getItem("token");
             const headers: Record<string, string> = {
                 'Content-Type': 'application/json'
             };
-            
-            if (requiresAuth && token) {
-                headers["Authorization"] = `Bearer ${token}`;
-            }
 
-            const response = await fetch(getApiUrl(endpoint), { 
-                method, 
+            const response = await fetch(getApiUrl(endpoint), {
+                method,
                 headers,
-                body: body ? JSON.stringify(body) : undefined
+                body: body ? JSON.stringify(body) : undefined,
+                credentials: 'include' 
             });
 
             if (!response.ok) {
@@ -56,7 +52,7 @@ function useApi(method: string, requiresAuth: boolean) {
         } finally {
             setLoading(false);
         }
-    }, [method, requiresAuth]);
+    }, [method]);
 
     return { fetchData, loading, error, isApiDown };
 }

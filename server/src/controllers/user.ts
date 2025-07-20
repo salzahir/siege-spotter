@@ -1,5 +1,6 @@
 import * as userDb from '../db/users';
 import { Request, Response } from 'express';
+import { generateToken } from '../middleware/auth';
 
 async function handleGetUsers(req: Request, res: Response) {
     try {
@@ -27,10 +28,16 @@ async function handleLoginUser(req: Request, res: Response) {
     const { email, password } = req.body;
     try {
         const user = await userDb.loginUser(email, password);
+        const token = generateToken(String(user.id));
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+        });
         res.status(200).json(
             {
                 message: "Login successful",
-                user
+                user,
         });
     } catch (error) {
         console.error("Error logging in user:", error);
