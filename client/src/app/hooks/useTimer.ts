@@ -30,6 +30,12 @@ function useTimer() {
         intervalRef.current = null;
     }
 
-    return { timer, handleStart, handleStop, startTime };
+    function resetTimer() {
+        handleStop();
+        setStartTime(null);
+        setNow(null);
+    }
+
+    return { timer, handleStart, handleStop, resetTimer, startTime };
 }
 export default useTimer;

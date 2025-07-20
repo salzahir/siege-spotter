@@ -19,8 +19,8 @@ export default function Game() {
   const [gameOver, setGameOver] = useState(false);
   const [foundCharacters, setFoundCharacters] = useState<string[]>([]);
   const [gameMessage, setGameMessage] = useState<string | null>(null);
-  const { timer, handleStart, handleStop, startTime } = useTimer();
-  const { name, email, password, setName, setEmail, setPassword, handleSubmit, formMessage } = useForm(timer);
+  const { timer, handleStart, handleStop, resetTimer, startTime } = useTimer();
+  const { name, email, password, setName, setEmail, setPassword, handleSubmit, formMessage, resetForm } = useForm(timer);
 
   useEffect(() => {
     const allFound = charactersToFind.every(char => foundCharacters.includes(char));
@@ -72,6 +72,17 @@ export default function Game() {
     setCoords(newCoords);
     checkWaldo(newCoords);
   };
+
+  function resetGame() {
+    // Close modal and reset game state
+    setGameOver(false);
+    setGameMessage(null);
+    setFoundCharacters([]);
+    setCoords(null);
+    
+    resetForm();
+    resetTimer();
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 p-4">
@@ -155,7 +166,14 @@ export default function Game() {
       {/* Game Complete Modal */}
       {gameOver && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-2xl">
+          <div className="relative bg-white rounded-xl p-6 max-w-md w-full shadow-2xl">
+            <button
+              onClick={resetGame}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold"
+              aria-label="Close"
+            >
+              ×
+            </button>
             <div className="text-center mb-6">
               <div className="text-4xl mb-2">🎉</div>
               <h2 className="text-2xl font-bold text-amber-900 mb-2">Congratulations!</h2>

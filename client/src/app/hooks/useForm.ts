@@ -8,6 +8,7 @@ function useForm(timer: number) {
   const { fetchData: postUser } = useApi("POST", true);
   const [formMessage, setFormMessage] = useState<string | null>(null);
 
+
 async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const json = { name, email, password, timer };
@@ -23,7 +24,14 @@ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     }
   }
 
-  return { name, email, password, setName, setEmail, setPassword, handleSubmit, formMessage };
+  function resetForm() {
+    setName("");
+    setEmail("");
+    setPassword("");
+    setFormMessage(null);
+  }
+
+  return { name, email, password, setName, setEmail, setPassword, handleSubmit, formMessage, resetForm };
 }
 
 export default useForm;
