@@ -8,7 +8,7 @@ import useForm from "../hooks/useForm";
 export default function Game() {
   const [cords, setCoords] = useState<{ x: number; y: number } | null>(null);
   const siegeImage = useRef<HTMLImageElement>(null);
-  const { fetchData, error } = useApi("POST", false);
+  const { fetchData, error } = useApi("POST");
   const charactersToFind = useMemo(() => [
     "White Turban Guy",
     "Orange Shirt Guy",

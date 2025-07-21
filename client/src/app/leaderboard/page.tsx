@@ -12,7 +12,7 @@ interface User {
 }
 
 function Leaderboard() {
-    const {fetchData, loading, error} = useApi("GET", false);
+    const {fetchData, loading, error} = useApi("GET");
     const [users, setUsers] = useState<User[]>([]);
 
     useEffect(() => { 

@@ -5,7 +5,7 @@ function useForm(timer: number) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { fetchData: postUser } = useApi("POST", true);
+  const { fetchData: postUser } = useApi("POST");
   const [formMessage, setFormMessage] = useState<string | null>(null);
 
 

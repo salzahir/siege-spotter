@@ -3,7 +3,7 @@ import { getApiUrl } from "../services/api";
 
 type RequestBody = Record<string, unknown>;
 
-function useApi(method: string, requiresAuth: boolean) {
+function useApi(method: string) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isApiDown, setIsApiDown] = useState(false);
@@ -15,7 +15,7 @@ function useApi(method: string, requiresAuth: boolean) {
             const headers: Record<string, string> = {
                 'Content-Type': 'application/json'
             };
-
+            console.log("🔗 Full URL to fetch:", getApiUrl(endpoint));
             const response = await fetch(getApiUrl(endpoint), {
                 method,
                 headers,
