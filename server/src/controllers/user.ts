@@ -38,11 +38,30 @@ async function handleLoginUser(req: Request, res: Response) {
             {
                 message: "Login successful",
                 user,
-        });
+            });
     } catch (error) {
         console.error("Error logging in user:", error);
         res.status(401).json({ error: "Invalid email or password" });
     }
 }
 
-export { handleGetUsers, handlePostUser, handleLoginUser };
+
+async function handleGetUser(req: Request, res: Response): Promise<void> {
+    const userId = Number(req.user?.id);
+
+    if (!userId) {
+        res.status(401).json({ message: "Unauthorized" });
+        return;
+    }
+
+    const user = await userDb.fetchUser(userId);
+
+    if (!user) {
+        res.status(404).json({ message: "User not found" });
+        return;
+    }
+
+    res.status(200).json(user); // ✅ no return statement
+}
+
+export { handleGetUsers, handlePostUser, handleLoginUser, handleGetUser };

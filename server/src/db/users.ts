@@ -69,8 +69,32 @@ async function loginUser(email: string, password: string) {
   }
 }
 
+async function fetchUser(userID: number) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userID },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        bestTime: true,
+        currentTime: true,
+        lastPlayed: true,
+      },
+    });
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return user;
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    throw error;
+}  
+}  
+
 export {
   postUser
   , getUsers, 
-  loginUser
+  loginUser,
+  fetchUser
 }
