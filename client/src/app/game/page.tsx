@@ -1,14 +1,13 @@
 "use client";
 import { useRef, useState, useEffect, useMemo } from "react";
-import useApi from "../hooks/useApi";
 import useTimer from "../hooks/useTimer";
 import useForm from "../hooks/useForm";
 import NavigationButtons from "../components/NavigationButtons";
+import useGame from "../hooks/useGame";
 
 export default function Game() {
   const [cords, setCoords] = useState<{ x: number; y: number } | null>(null);
   const siegeImage = useRef<HTMLImageElement>(null);
-  const { fetchData, error } = useApi("POST");
   const charactersToFind = useMemo(() => [
     "White Turban Guy",
     "Orange Shirt Guy",
@@ -16,11 +15,11 @@ export default function Game() {
     "White Horse",
     "Red Dress Woman"
   ], []);
-  const [gameOver, setGameOver] = useState(false);
-  const [foundCharacters, setFoundCharacters] = useState<string[]>([]);
+
   const [gameMessage, setGameMessage] = useState<string | null>(null);
   const { timer, handleStart, handleStop, resetTimer, startTime } = useTimer();
   const { name, email, password, setName, setEmail, setPassword, handleSubmit, formMessage, resetForm } = useForm(timer);
+  const { gameOver, foundCharacters, setGameOver, setFoundCharacters, checkWaldo, error } = useGame(setGameMessage);
 
   useEffect(() => {
     const allFound = charactersToFind.every(char => foundCharacters.includes(char));
@@ -29,30 +28,9 @@ export default function Game() {
       setGameMessage("Game Over You have already found all characters! Please refresh the page to play again.");
       handleStop();
     }
-  }, [foundCharacters, charactersToFind, gameOver, handleStop]);
+  }, [foundCharacters, charactersToFind, gameOver, handleStop, setGameOver]);
 
-  async function checkWaldo(cords: { x: number, y: number }) {
-    if (!cords) return;
-
-    try {
-      setGameMessage("");
-      const res = await fetchData("/check", {
-        postX: cords.x,
-        postY: cords.y,
-      });
-      if (res) {
-        if (res.character && !foundCharacters.includes(res.character)) {
-          setFoundCharacters(prev => [...prev, res.character]);
-        }
-        setGameMessage(res.message);
-      }
-    } catch (err) {
-      console.error("Error checking Waldo:", err);
-      alert("An error occurred while checking for Waldo.");
-    }
-  }
-
-  async function handleClick(event: React.MouseEvent<HTMLImageElement, MouseEvent>) {
+    async function handleClick(event: React.MouseEvent<HTMLImageElement, MouseEvent>) {
     if (!startTime && !gameOver) {
       handleStart();
       setGameMessage("Game Started! Click on the image to find Waldo.");
