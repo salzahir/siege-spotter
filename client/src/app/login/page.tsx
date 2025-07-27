@@ -2,7 +2,7 @@
 import { useState } from "react";
 import useApi from "../hooks/useApi";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import NavigationButtons from "../components/NavigationButtons";
 
 export default function Login() {
     const router = useRouter();
@@ -20,7 +20,7 @@ export default function Login() {
             return;
         }
         setMessage("Login successful");
-        router.push("/");
+        router.push("/user");
     }
 
     return (
@@ -92,27 +92,12 @@ export default function Login() {
                     </form>
                 </div>
 
-                {/* Register Link */}
-                <div className="text-center mt-6">
-                    <p className="text-amber-800 font-medium">
-                        Don&apos;t have an account?{" "}
-                        <Link 
-                            href="/register" 
-                            className="text-amber-700 hover:text-amber-900 font-semibold underline decoration-2"
-                        >
-                            Register here
-                        </Link>
-                    </p>
-                </div>
-
-                {/* Navigation */}
-                <div className="flex justify-center mt-8">
-                    <Link 
-                        href="/" 
-                        className="px-6 py-3 rounded-lg font-semibold transition-colors bg-amber-800 hover:bg-amber-900 text-white shadow-sm"
-                    >
-                        🏠 Back to Home
-                    </Link>
+                {/* Navigation Buttons */}
+                <div className="mt-8">
+                    <NavigationButtons 
+                        excludeItems={["/login"]} 
+                        className="max-w-md mx-auto"
+                    />
                 </div>
             </div>
         </div>

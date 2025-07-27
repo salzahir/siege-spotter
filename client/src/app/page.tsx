@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import NavigationButtons from "./components/NavigationButtons";
 
 function Home() {
     return (
@@ -22,37 +22,7 @@ function Home() {
                     </ul>
                 </div>
 
-                {/* Primary Action */}
-                <div className="pt-4">
-                    <Link 
-                        href="/game"
-                        className="inline-block px-8 py-4 rounded-lg font-bold text-lg transition-colors bg-[#1F4D7A] text-[#F5F5F5] border-2 border-[#3F7B5C] hover:bg-[#3F7B5C] shadow-lg transform hover:scale-105"
-                    >
-                        🎯 Start Game
-                    </Link>
-                </div>
-
-                {/* Secondary Actions */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-2xl">
-                    <Link
-                        href="/leaderboard"
-                        className="px-6 py-3 rounded-lg font-semibold transition-colors bg-[#1F4D7A] text-[#F5F5F5] border-2 border-[#C89F45] hover:bg-[#C89F45] text-center"
-                    >
-                        🏆 Leaderboard
-                    </Link>
-                    <Link
-                        href="/context"
-                        className="px-6 py-3 rounded-lg font-semibold transition-colors bg-[#1F4D7A] text-[#F5F5F5] border-2 border-[#B44A2F] hover:bg-[#B44A2F] text-center"
-                    >
-                        🏰 Context
-                    </Link>
-                    <Link
-                        href="/login"
-                        className="px-6 py-3 rounded-lg font-semibold transition-colors bg-[#1F4D7A] text-[#F5F5F5] border-2 border-[#6B7280] hover:bg-[#6B7280] text-center"
-                    >
-                        🔐 Login
-                    </Link>
-                </div>
+                <NavigationButtons excludeItems={["/"]} />
             </div>
         </div>
     );

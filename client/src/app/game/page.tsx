@@ -1,9 +1,9 @@
 "use client";
 import { useRef, useState, useEffect, useMemo } from "react";
-import Link from "next/link";
 import useApi from "../hooks/useApi";
 import useTimer from "../hooks/useTimer";
 import useForm from "../hooks/useForm";
+import NavigationButtons from "../components/NavigationButtons";
 
 export default function Game() {
   const [cords, setCoords] = useState<{ x: number; y: number } | null>(null);
@@ -85,168 +85,153 @@ export default function Game() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 p-4">
-      {/* Header */}
-      <div className="text-center mb-6">
-        <h1 className="text-3xl font-bold text-amber-900 mb-2">🎯 Siege Spotter</h1>
-        <p className="text-amber-700 text-sm">Find all characters in the medieval siege scene</p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100">
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl md:text-5xl font-bold text-amber-900 mb-4">🎯 Siege Spotter</h1>
+          <p className="text-amber-700 text-lg md:text-xl">Find all characters in the medieval siege scene</p>
+        </div>
 
-      {/* Game Status Bar */}
-      <div className="max-w-6xl mx-auto mb-6">
-        <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 shadow-sm">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            {/* Timer */}
-            <div className="text-lg font-semibold text-amber-900">
-              ⏱️ {(timer / 1000).toFixed(1)}s
-            </div>
-            
-            {/* Characters Progress */}
-            <div className="flex flex-wrap gap-2">
-              {charactersToFind.map((char) => (
-                <span
-                  key={char}
-                  className={`text-xs px-3 py-1 rounded-full font-medium ${
-                    foundCharacters.includes(char)
-                      ? 'bg-green-100 text-green-800 border border-green-200'
-                      : 'bg-gray-100 text-gray-600 border border-gray-200'
-                  }`}
-                >
-                  {foundCharacters.includes(char) ? '✓' : '•'} {char}
-                </span>
-              ))}
-            </div>
+        {/* Game Status Bar */}
+        <div className="mb-8">
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-amber-200">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              {/* Timer */}
+              <div className="text-xl font-semibold text-amber-900">
+                ⏱️ {(timer / 1000).toFixed(1)}s
+              </div>
+              
+              {/* Characters Progress */}
+              <div className="flex flex-wrap gap-2 justify-center flex-1">
+                {charactersToFind.map((char) => (
+                  <span
+                    key={char}
+                    className={`text-sm px-4 py-2 rounded-full font-medium transition-colors ${
+                      foundCharacters.includes(char)
+                        ? 'bg-green-100 text-green-800 border border-green-200'
+                        : 'bg-gray-100 text-gray-600 border border-gray-200'
+                    }`}
+                  >
+                    {foundCharacters.includes(char) ? '✓' : '•'} {char}
+                  </span>
+                ))}
+              </div>
 
-            {/* Progress Counter */}
-            <div className="text-sm font-medium text-amber-800">
-              {foundCharacters.length}/{charactersToFind.length} found
+              {/* Progress Counter */}
+              <div className="text-lg font-medium text-amber-800">
+                {foundCharacters.length}/{charactersToFind.length} found
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Messages */}
-      <div className="max-w-6xl mx-auto mb-4">
-        {gameMessage && (
-          <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-2 rounded-lg text-center mb-2">
-            {gameMessage}
-          </div>
-        )}
-        {formMessage && (
-          <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-2 rounded-lg text-center mb-2">
-            {formMessage}
-          </div>
-        )}
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-2 rounded-lg text-center mb-2">
-            Error: {error}
-          </div>
-        )}
-      </div>
-
-      {/* Game Image */}
-      <div className="flex justify-center mb-6">
-        <div className="relative">
-          {/* eslint-disable @next/next/no-img-element */}
-          <img
-            ref={siegeImage}
-            src="/siege.png"
-            alt="Medieval Siege Scene - Find the hidden characters"
-            className="cursor-crosshair max-w-full max-h-[70vh] object-contain rounded-lg shadow-lg border-2 border-amber-200"
-            onClick={handleClick}
-          />
-          {cords && (
-            <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-              {cords.x.toFixed(3)}, {cords.y.toFixed(3)}
+        {/* Messages */}
+        <div className="mb-6">
+          {gameMessage && (
+            <div className="bg-green-50 border border-green-200 text-green-800 px-6 py-4 rounded-xl text-center mb-4 max-w-3xl mx-auto">
+              {gameMessage}
+            </div>
+          )}
+          {formMessage && (
+            <div className="bg-blue-50 border border-blue-200 text-blue-800 px-6 py-4 rounded-xl text-center mb-4 max-w-3xl mx-auto">
+              {formMessage}
+            </div>
+          )}
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-800 px-6 py-4 rounded-xl text-center mb-4 max-w-3xl mx-auto">
+              Error: {error}
             </div>
           )}
         </div>
-      </div>
 
-      {/* Game Complete Modal */}
-      {gameOver && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="relative bg-white rounded-xl p-6 max-w-md w-full shadow-2xl">
-            <button
-              onClick={resetGame}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold"
-              aria-label="Close"
-            >
-              ×
-            </button>
-            <div className="text-center mb-6">
-              <div className="text-4xl mb-2">🎉</div>
-              <h2 className="text-2xl font-bold text-amber-900 mb-2">Congratulations!</h2>
-              <p className="text-amber-700">You found all characters in {(timer / 1000).toFixed(1)} seconds!</p>
-            </div>
-            
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                <input 
-                  id="name" 
-                  type="text" 
-                  value={name} 
-                  onChange={e => setName(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                  required
-                />
+        {/* Game Image */}
+        <div className="flex justify-center mb-8">
+          <div className="relative">
+            {/* eslint-disable @next/next/no-img-element */}
+            <img
+              ref={siegeImage}
+              src="/siege.png"
+              alt="Medieval Siege Scene - Find the hidden characters"
+              className="cursor-crosshair max-w-full max-h-[70vh] object-contain rounded-xl shadow-xl border-2 border-amber-200"
+              onClick={handleClick}
+            />
+            {cords && (
+              <div className="absolute top-4 right-4 bg-black/80 text-white text-sm px-3 py-2 rounded-lg shadow-lg">
+                {cords.x.toFixed(3)}, {cords.y.toFixed(3)}
               </div>
-              
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                <input 
-                  id="email" 
-                  type="email" 
-                  value={email} 
-                  onChange={e => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                  required
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password (Optional)</label>
-                <input 
-                  id="password" 
-                  type="password" 
-                  value={password} 
-                  onChange={e => setPassword(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                />
-              </div>
-              
-              <button 
-                type="submit" 
-                className="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
-              >
-                Save to Leaderboard
-              </button>
-            </form>
+            )}
           </div>
         </div>
-      )}
 
-      {/* Navigation */}
-      <div className="max-w-4xl mx-auto flex flex-wrap justify-center gap-4 pt-8">
-        <Link 
-          href="/" 
-          className="px-6 py-3 rounded-lg font-semibold transition-colors bg-amber-800 hover:bg-amber-900 text-white shadow-sm"
-        >
-          🏠 Home
-        </Link>
-        <Link 
-          href="/context" 
-          className="px-6 py-3 rounded-lg font-semibold transition-colors bg-orange-600 hover:bg-orange-700 text-white shadow-sm"
-        >
-          🏰 Historical Context
-        </Link>
-        <Link 
-          href="/leaderboard" 
-          className="px-6 py-3 rounded-lg font-semibold transition-colors bg-amber-600 hover:bg-amber-700 text-white shadow-sm"
-        >
-          🏆 Leaderboard
-        </Link>
+        {/* Game Complete Modal */}
+        {gameOver && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+            <div className="relative bg-white rounded-xl p-8 max-w-md w-full shadow-2xl mx-4">
+              <button
+                onClick={resetGame}
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold transition-colors"
+                aria-label="Close"
+              >
+                ×
+              </button>
+              <div className="text-center mb-8">
+                <div className="text-5xl mb-4">🎉</div>
+                <h2 className="text-2xl font-bold text-amber-900 mb-3">Congratulations!</h2>
+                <p className="text-amber-700 text-lg">You found all characters in {(timer / 1000).toFixed(1)} seconds!</p>
+              </div>
+              
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                  <input 
+                    id="name" 
+                    type="text" 
+                    value={name} 
+                    onChange={e => setName(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                  <input 
+                    id="email" 
+                    type="email" 
+                    value={email} 
+                    onChange={e => setEmail(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">Password (Optional)</label>
+                  <input 
+                    id="password" 
+                    type="password" 
+                    value={password} 
+                    onChange={e => setPassword(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
+                  />
+                </div>
+                
+                <button 
+                  type="submit" 
+                  className="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
+                >
+                  Save to Leaderboard
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Navigation Buttons - Centered */}
+        <div className="flex justify-center mt-12">
+          <NavigationButtons excludeItems={["/game"]} showPrimaryAction={false} className="w-full max-w-md" />
+        </div>
       </div>
     </div>
   );

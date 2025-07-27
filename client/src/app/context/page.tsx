@@ -1,3 +1,5 @@
+import NavigationButtons from "../components/NavigationButtons";
+
 const siegeOfBaghdad1258 = {
   title: "Siege of Baghdad (1258)",
   summary:
@@ -119,26 +121,9 @@ export default function Context() {
                 </p>
             </div>
 
-            {/* Navigation */}
-            <div className="max-w-4xl mx-auto flex flex-wrap justify-center gap-4">
-                <Link 
-                    href="/game" 
-                    className="px-6 py-3 rounded-lg font-semibold transition-colors bg-amber-600 hover:bg-amber-700 text-white shadow-sm"
-                >
-                    🎯 Play Game
-                </Link>
-                <Link 
-                    href="/leaderboard" 
-                    className="px-6 py-3 rounded-lg font-semibold transition-colors bg-orange-600 hover:bg-orange-700 text-white shadow-sm"
-                >
-                    🏆 Leaderboard
-                </Link>
-                <Link 
-                    href="/" 
-                    className="px-6 py-3 rounded-lg font-semibold transition-colors bg-amber-800 hover:bg-amber-900 text-white shadow-sm"
-                >
-                    🏠 Home
-                </Link>
+            {/* Navigation Buttons */}
+            <div className="max-w-4xl mx-auto">
+                <NavigationButtons excludeItems={["/context"]} />
             </div>
         </div>
     )
