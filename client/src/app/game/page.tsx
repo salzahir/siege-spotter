@@ -4,9 +4,18 @@ import useTimer from "../hooks/useTimer";
 import useForm from "../hooks/useForm";
 import NavigationButtons from "../components/NavigationButtons";
 import useGame from "../hooks/useGame";
+import useApi from "../hooks/useApi";
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
 
 export default function Game() {
   const [cords, setCoords] = useState<{ x: number; y: number } | null>(null);
+  const { fetchData } = useApi("GET");
+  const [user, setUser] = useState<User | null>(null);
   const siegeImage = useRef<HTMLImageElement>(null);
   const charactersToFind = useMemo(() => [
     "White Turban Guy",
@@ -22,6 +31,19 @@ export default function Game() {
   const { gameOver, foundCharacters, setGameOver, setFoundCharacters, checkWaldo, error } = useGame(setGameMessage);
 
   useEffect(() => {
+    async function fetchUser() {
+      try {
+        const res = await fetchData("/users/me")
+        setUser(res)
+        console.log(res)
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    }
+    fetchUser();
+  }, [fetchData]);
+
+  useEffect(() => {
     const allFound = charactersToFind.every(char => foundCharacters.includes(char));
     if (allFound && !gameOver) {
       setGameOver(true);
@@ -30,7 +52,7 @@ export default function Game() {
     }
   }, [foundCharacters, charactersToFind, gameOver, handleStop, setGameOver]);
 
-    async function handleClick(event: React.MouseEvent<HTMLImageElement, MouseEvent>) {
+  async function handleClick(event: React.MouseEvent<HTMLImageElement, MouseEvent>) {
     if (!startTime && !gameOver) {
       handleStart();
       setGameMessage("Game Started! Click on the image to find Waldo.");
@@ -57,7 +79,7 @@ export default function Game() {
     setGameMessage(null);
     setFoundCharacters([]);
     setCoords(null);
-    
+
     resetForm();
     resetTimer();
   }
@@ -69,6 +91,12 @@ export default function Game() {
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold text-amber-900 mb-4">🎯 Siege Spotter</h1>
           <p className="text-amber-700 text-lg md:text-xl">Find all characters in the medieval siege scene</p>
+
+          <div className="text-center mb-8">
+            <p className="text-amber-700 text-lg md:text-xl">
+              {user ? `Welcome back, ${user.name}!` : "Welcome Guest!"}
+            </p>
+          </div>
         </div>
 
         {/* Game Status Bar */}
@@ -79,17 +107,16 @@ export default function Game() {
               <div className="text-xl font-semibold text-amber-900">
                 ⏱️ {(timer / 1000).toFixed(1)}s
               </div>
-              
+
               {/* Characters Progress */}
               <div className="flex flex-wrap gap-2 justify-center flex-1">
                 {charactersToFind.map((char) => (
                   <span
                     key={char}
-                    className={`text-sm px-4 py-2 rounded-full font-medium transition-colors ${
-                      foundCharacters.includes(char)
+                    className={`text-sm px-4 py-2 rounded-full font-medium transition-colors ${foundCharacters.includes(char)
                         ? 'bg-green-100 text-green-800 border border-green-200'
                         : 'bg-gray-100 text-gray-600 border border-gray-200'
-                    }`}
+                      }`}
                   >
                     {foundCharacters.includes(char) ? '✓' : '•'} {char}
                   </span>
@@ -158,45 +185,45 @@ export default function Game() {
                 <h2 className="text-2xl font-bold text-amber-900 mb-3">Congratulations!</h2>
                 <p className="text-amber-700 text-lg">You found all characters in {(timer / 1000).toFixed(1)} seconds!</p>
               </div>
-              
+
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Name</label>
-                  <input 
-                    id="name" 
-                    type="text" 
-                    value={name} 
+                  <input
+                    id="name"
+                    type="text"
+                    value={name}
                     onChange={e => setName(e.target.value)}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
                     required
                   />
                 </div>
-                
+
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                  <input 
-                    id="email" 
-                    type="email" 
-                    value={email} 
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
                     onChange={e => setEmail(e.target.value)}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
                     required
                   />
                 </div>
-                
+
                 <div>
                   <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">Password (Optional)</label>
-                  <input 
-                    id="password" 
-                    type="password" 
-                    value={password} 
+                  <input
+                    id="password"
+                    type="password"
+                    value={password}
                     onChange={e => setPassword(e.target.value)}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
                   />
                 </div>
-                
-                <button 
-                  type="submit" 
+
+                <button
+                  type="submit"
                   className="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
                 >
                   Save to Leaderboard
