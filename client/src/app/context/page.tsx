@@ -8,7 +8,7 @@ const siegeOfBaghdad1258 = {
   keyPoints: {
     date: "January–February 1258",
     invaders: "Mongols under Hulagu Khan",
-    defenders: "Abbasid Caliphate, led by Caliph Al-Musta’sim"
+    defenders: "Abbasid Caliphate, led by Caliph Al-Musta'sim"
   },
 
   whatHappened: [
@@ -16,7 +16,7 @@ const siegeOfBaghdad1258 = {
     "Mongols laid siege to the city, breached it within two weeks, and began a brutal massacre.",
     "Baghdad was sacked—its population was slaughtered, estimated from 100,000 to over 1 million dead.",
     "The House of Wisdom (Bayt al-Hikma) and priceless libraries were destroyed, symbolizing the collapse of the Islamic Golden Age.",
-    "The Caliph was executed, ending the Abbasid Caliphate’s 500-year rule."
+    "The Caliph was executed, ending the Abbasid Caliphate's 500-year rule."
   ],
 
   historicalImpact: [
@@ -27,7 +27,6 @@ const siegeOfBaghdad1258 = {
 };
 
 import Image from "next/image";
-import Link from "next/link";
 
 export default function Context() {
     return (
